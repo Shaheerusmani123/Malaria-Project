@@ -8,36 +8,28 @@ import DetectionPage from "./pages/DetectionPage";
 import HistoryPage from "./pages/HistoryPage";
 import AboutPage from "./pages/AboutPage";
 import NotFound from "./pages/NotFound";
-import MalariaDetector from './components/MalariaDetector';
 import './App.css';
+
+const queryClient = new QueryClient();
 
 function App() {
   return (
-    <div className="App">
-      <MalariaDetector />
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/detect" element={<DetectionPage />} />
+            <Route path="/history" element={<HistoryPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
   );
 }
-
-export default App;
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/detect" element={<DetectionPage />} />
-          <Route path="/history" element={<HistoryPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
 
 export default App;
