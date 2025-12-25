@@ -5,3 +5,4 @@ torch==2.6.0+cpu
 torchvision==0.21.0+cpu
 pillow==11.0.0
 gunicorn==21.2.0
+reportlab==4.2.5
