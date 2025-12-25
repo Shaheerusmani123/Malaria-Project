@@ -8,7 +8,18 @@ import DetectionPage from "./pages/DetectionPage";
 import HistoryPage from "./pages/HistoryPage";
 import AboutPage from "./pages/AboutPage";
 import NotFound from "./pages/NotFound";
+import MalariaDetector from './components/MalariaDetector';
+import './App.css';
 
+function App() {
+  return (
+    <div className="App">
+      <MalariaDetector />
+    </div>
+  );
+}
+
+export default App;
 const queryClient = new QueryClient();
 
 const App = () => (
