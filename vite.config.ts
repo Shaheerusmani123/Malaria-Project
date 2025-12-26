@@ -9,6 +9,15 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
+  preview: {
+    host: "0.0.0.0",
+    port: parseInt(process.env.PORT || "8080"),
+    allowedHosts: [
+      'smartmalariaai.up.railway.app',
+      'web-production-1704e.up.railway.app',
+      '.railway.app', // Wildcard for all Railway domains
+    ]
+  },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
     alias: {
