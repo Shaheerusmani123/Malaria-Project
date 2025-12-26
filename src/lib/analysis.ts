@@ -38,8 +38,8 @@ export interface PatientInfo {
   notes?: string;
 }
 
-// Get API URL from environment variable or use Railway URL
-const API_URL = import.meta.env.VITE_API_URL || 'https://malaria-detector-api-production-2b3f.up.railway.app';
+// Remove trailing slash to prevent double slashes
+const API_URL = (import.meta.env.VITE_API_URL || 'https://malaria-detector-api-production-2b3f.up.railway.app').replace(/\/$/, '');;
 
 // Real analysis function - calls Railway backend
 export const analyzeWithAI = async (imageFile: File): Promise<AnalysisResult> => {
