@@ -11,11 +11,12 @@ export default defineConfig(({ mode }) => ({
   },
   preview: {
     host: "0.0.0.0",
-    port: parseInt(process.env.PORT || "8080"),
+    port: 8080,
+    strictPort: false,
     allowedHosts: [
-      'smartmalariaai.up.railway.app',
-      'web-production-1704e.up.railway.app',
-      '.railway.app', // Wildcard for all Railway domains
+      ".railway.app",
+      "smartmalariaai.up.railway.app",
+      "web-production-1704e.up.railway.app"
     ]
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
