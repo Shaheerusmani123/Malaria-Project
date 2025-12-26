@@ -27,7 +27,14 @@ app = Flask(__name__)
 allowed_origins = os.environ.get('ALLOWED_ORIGINS', '*')
 if allowed_origins != '*':
     allowed_origins = allowed_origins.split(',')
-CORS(app, resources={r"/api/*": {"origins": allowed_origins}})
+# Configure CORS with proper settings for production
+CORS(app, 
+     resources={r"/api/*": {
+         "origins": allowed_origins,
+         "methods": ["GET", "POST", "OPTIONS"],
+         "allow_headers": ["Content-Type"],
+         "supports_credentials": False
+     }})
 
 # Load pretrained ResNet50 model
 from torchvision import models
