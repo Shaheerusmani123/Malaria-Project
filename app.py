@@ -21,24 +21,45 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER
 
 app = Flask(__name__)
-# CORS configuration - allows frontend to connect
-# For development: allows all origins
-# For production: set ALLOWED_ORIGINS environment variable
-allowed_origins = os.environ.get('ALLOWED_ORIGINS', '*')
-if allowed_origins != '*':
-    allowed_origins = allowed_origins.split(',')
-# Configure CORS with proper settings for production
-CORS(app, 
-     resources={r"/api/*": {
-         "origins": allowed_origins,
-         "methods": ["GET", "POST", "OPTIONS"],
-         "allow_headers": ["Content-Type"],
-         "supports_credentials": False
-     }})
+
+# CORS configuration - FIXED VERSION
+CORS(app, resources={
+    r"/*": {
+        "origins": [
+            "https://smartmalariaai.up.railway.app",
+            "http://localhost:8080",
+            "http://localhost:5173",
+            "http://localhost:3000"
+        ],
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization", "Accept"],
+        "supports_credentials": False,
+        "max_age": 3600
+    }
+})
+
+# Alternative: Add manual CORS headers as backup
+@app.after_request
+def after_request(response):
+    origin = request.headers.get('Origin')
+    allowed_origins = [
+        'https://smartmalariaai.up.railway.app',
+        'http://localhost:8080',
+        'http://localhost:5173',
+        'http://localhost:3000'
+    ]
+    
+    if origin in allowed_origins:
+        response.headers['Access-Control-Allow-Origin'] = origin
+    else:
+        response.headers['Access-Control-Allow-Origin'] = 'https://smartmalariaai.up.railway.app'
+    
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, Accept'
+    response.headers['Access-Control-Max-Age'] = '3600'
+    return response
 
 # Load pretrained ResNet50 model
-from torchvision import models
-
 MODEL_PATH = 'public/malaria_model.pth'
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print("Loading model...")
@@ -85,8 +106,12 @@ def home():
         }
     }), 200
 
-@app.route('/api/predict', methods=['POST'])
+@app.route('/api/predict', methods=['POST', 'OPTIONS'])
 def predict():
+    # Handle preflight request
+    if request.method == 'OPTIONS':
+        return '', 204
+    
     if model is None:
         return jsonify({'error': 'Model not loaded'}), 500
     
@@ -129,8 +154,12 @@ def predict():
         print(f"Error: {str(e)}")
         return jsonify({'error': f'Prediction failed: {str(e)}'}), 500
 
-@app.route('/api/generate-report', methods=['POST'])
+@app.route('/api/generate-report', methods=['POST', 'OPTIONS'])
 def generate_report():
+    # Handle preflight request
+    if request.method == 'OPTIONS':
+        return '', 204
+    
     try:
         data = request.json
         patient_info = data.get('patientInfo', {})
